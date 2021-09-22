@@ -55,10 +55,10 @@ public class ReactorTest {
     public void test2() {
 
         Mono<Boolean> any = getStudents()
-                .any(student -> student.getAge() >= 16);
+                .any(student -> student.getAge() >= 35);
 
         StepVerifier.create(any)
-                .expectNext(true)
+                .expectNext(false)
                 .verifyComplete();
     }
 
@@ -115,7 +115,7 @@ public class ReactorTest {
         Mono<List<Student>> collect = getStudents()
                 .flatMap(student -> isRegistered(student)
                         .filter(isRegistered -> !isRegistered)
-                        .switchIfEmpty(Mono.defer(() -> isDuePaidIn2021(student))//if not deferred, isDuePaidIn2021 will get evaluated immediately and will cause NPE for ronaldo since he doesn't have lastPaidInYear
+                        .switchIfEmpty(Mono.defer(() -> isDuePaidIn2021(student))//if not deferred, isDuePaidIn2021 will get evaluated immediately for all the unregistered students too and will cause NPE for ronaldo since he doesn't have lastPaidInYear
                                 .filter(isDuePaid -> !isDuePaid)
                         )
                         .map(aBoolean -> student)
